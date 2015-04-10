@@ -1,0 +1,46 @@
+@charset 'utf-8';
+.table-striped {
+  table-layout: fixed;
+}
+.table-striped th {
+  text-align: center;
+}
+.table-striped th.tal {
+  text-align: left;
+}
+.table-striped td {
+  word-wrap: break-word;
+  text-align: center;
+}
+.table-striped td.url {
+  text-align: left;
+}
+.text-over {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.wp40 {
+  width: 40%;
+}
+.url-search {
+  width: 500px;
+  margin: 0 auto;
+}
+.url-search input {
+  width: 400px;
+  border-radius: 0;
+}
+.url-search .submit-url {
+  border-radius: 0;
+}
+.loading {
+  background-image: url(../img/loading.gif);
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  color: transparent;
+}
+.modal .bg-info {
+  padding: 15px;
+  color: #3a87ad;
+  border-radius: 4px;
+}
