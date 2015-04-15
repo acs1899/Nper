@@ -88,10 +88,10 @@
       <tr>
         <th class="wp40 tal">URL</th>
         <th>加载时间</th>
-        <th>资源大小</th>
         <th>过期时间</th>
         <th>是否Gzip</th>
         <th>使用CDN</th>
+        <th>资源大小</th>
         <th>压缩后大小</th>
         <th>压缩比</th>
       </tr>
@@ -106,19 +106,26 @@
         var cmr = value.cmr ? value.cmr : '';
     %>
       <tr class="<%=value.type%>">
-        <td class="url"><%=value.url%></td>
+        <td class="url" title="<%=value.url%>"><%=value.url%></td>
         <td><%=value.resp%></td>
-        <td><%=value.size%></td>
         <td><%=value.exp%></td>
         <td><%=gzip%></td>
         <td><%=cdn%></td>
+        <td><%=value.size%></td>
         <td><%=recmp%></td>
         <td><%=cmr%></td>
       </tr>
     <% } %>
     </tbody>
   </table>
-  <!--<div class="col-lg-4">
+  <p class="text-muted">压缩比为正值，表示该图片已进行过压缩并且已达到测试压缩标准</p>
+</script>
+<script type="text/javascript" src="jquery/jquery.min.js"></script>
+<script type="text/javascript" src="bootstrap/bootstrap.min.js"></script>
+<script type="text/javascript" src="vendor/holder.js"></script>
+<script type="text/javascript" src="art.js"></script>
+<script type="text/javascript" src="phantest.js"></script>
+<!--<div class="col-lg-4">
     <h3>静态资源分析</h3>
   </div>
   <h4>图片</h4>
@@ -144,13 +151,6 @@
       </tr>
     <% } %>
     </tbody>
-  </table>
-  <p class="text-muted">压缩比为正值，表示该图片已进行过压缩并且已达到预设的压缩标准</p>-->
-</script>
-<script type="text/javascript" src="jquery/jquery.min.js"></script>
-<script type="text/javascript" src="bootstrap/bootstrap.min.js"></script>
-<script type="text/javascript" src="vendor/holder.js"></script>
-<script type="text/javascript" src="art.js"></script>
-<script type="text/javascript" src="phantest.js"></script>
+  </table>-->
 </body>
 </html>

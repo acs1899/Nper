@@ -1,9 +1,9 @@
 {
-  "name": "Nper",
+  "name": "phantom",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
-  "author": "acs1899",
+  "author": "",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.12.2",
@@ -13,6 +13,7 @@
     "multer": "^0.1.8",
     "phantomjs": "^1.9.16",
     "request": "^2.54.0",
+    "yuicompressor": "^2.4.8"
   },
   "devDependencies": {
     "gulp": "^3.8.11",

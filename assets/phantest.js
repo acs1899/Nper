@@ -6,7 +6,8 @@ $(function(){
       r = $('.total-req'),
       dt = $('.total-download'),
       tableBox = $('.table-responsive'),
-      resultArea = $('.result-area');
+      resultArea = $('.result-area'),
+      cdns = ['sae.sinacdn.com'];
 
   function deal(_data){
     var total = 0;
@@ -15,8 +16,13 @@ $(function(){
       var __data = _data.comps[i];
       __data.url = decodeURIComponent(__data.url);
       if(__data.type == 'js' || __data.type == 'css' || __data.type == 'image' || __data.type == 'cssimage'){
-        __data.cmr = (((__data.recmp-__data.size)/__data.size)*100).toFixed(2)+'%';
-        __data.recmp = dealSize(__data.recmp);
+        if(!__data.err){
+          __data.cmr = (((__data.recmp-__data.size)/__data.size)*100).toFixed(2)+'%';
+          __data.recmp = dealSize(__data.recmp);
+        }else{
+          __data.cmr = 'N/A';
+          __data.recmp = 'syntax errors';
+        }
       }
       __data.size = dealSize(__data.size);
       var resp = __data.resp;
@@ -117,13 +123,19 @@ $(function(){
 
   function fetchUrl(){
     $.ajax({
-      url:'/phantom?url='+encodeURIComponent(input.val()),
+      url:'/phan/analyse',
+      type:'POST',
+      data:{'url':encodeURIComponent(input.val()),'cdns':cdns},
+      error:function(){
+        en();
+      },
       success:function(data){
         if(data.code === 200){
           var _data = data.data.out;
           deal(_data);
         }else{
           input.focus();
+          en();
         }
       }
     });
@@ -152,20 +164,21 @@ $(function(){
     var old = $('#phanModal');
   }
 
+  function goSearch(){
+    var val = input.val();
+    if(ValidURL(val)){
+      dis();
+      fetchUrl();
+    }else{
+      input.focus();
+    }
+  }
+
   function init(){
-    btn.on('click',function(){
-      var val = input.val();
-      if(ValidURL(val)){
-        dis();
-        fetchUrl();
-      }else{
-        input.focus();
-      }
-    });
+    btn.on('click',goSearch);
     input.on('keyup',function(e){
       if(e.keyCode == 13){
-        dis();
-        fetchUrl();
+        goSearch();
       }
     });
   }
