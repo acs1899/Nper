@@ -2,24 +2,29 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var multer = require('multer');
 var fs = require('fs');
+var path = require('path');
 var route = require('./core/route.js');
 var app = express();
+
+var pidfile = path.join(__dirname + '/run/app.pid');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(multer());
 
 app.use(express.static(__dirname + '/assets'));
+app.use(express.static(__dirname + '/static'));
 
-/*app.get('/',function(req,res){
-  res.sendFile(__dirname + '/view/index.html');
-});
-
-app.post('/phan',function(req,res){
-  phan(req,res,{url:req.body.url,cdns:req.body.cdns});
-});*/
 app.all('*',function(req,res){
   route(req,res);
 });
 
-app.listen(8080);
+app.listen(80);
+
+fs.writeFileSync(pidfile,process.pid);
+process.on('SIGTERM',function(){
+    if(fs.existsSync(pidfile)){
+        fs.unlinkSync(pidfile);
+    }
+    process.exit(0);
+});

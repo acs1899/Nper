@@ -1,7 +1,6 @@
 ;(function(){
   var path = require('path');
   var childProcess = require('child_process');
-  var phantomjs = require('phantomjs');
   var eventProxy = require('eventproxy');
   var cdn = require('./cdn.js');
   var imgMin = require('./imgMin.js');
@@ -9,7 +8,7 @@
   var tools = require('../lib/tools.js');
   var init = require('./init.json');
   var urls = require('url');
-  var binPath = phantomjs.path;
+  var cmd = 'phantomjs';
   var url = '';
   var cdns = ['sae.sinacdn.com'];
   var phan = {};
@@ -31,7 +30,7 @@
     Array.prototype.splice.apply(childArgs,[4,0].concat(cdns));
 
     if(url){
-      childProcess.execFile(binPath, childArgs, function(err, stdout, stderr) {
+      childProcess.exec(cmd + ' ' +  childArgs.join(' '), function(err, stdout, stderr) {
         var stdout = stdout || '',
             stderr = stderr || '';
         var data = {
@@ -47,22 +46,26 @@
           handleErr(req,res,404,'无效的URL');
           return
         }
+
         data.data.out = JSON.parse(stdout);
         var ep = new eventProxy();
+        var build = path.resolve('') + init.staticPath + url + '_' + tools.randomStr();
 
         ep.all('cdn','imgMin','jsMin','cssMin',function(){
           res.send(data);
+          /*删除静态资源*/
+          tools.rmdir(build);
         });
 
-        imgMin(data,url,function(){
+        imgMin(data,url,build+init.imgPath,function(){
           ep.emit('imgMin');
         });
 
-        jsCssMin('js',data,url,function(){
+        jsCssMin('js',data,url,build+init.jsPath,function(){
           ep.emit('jsMin');
         });
 
-        jsCssMin('css',data,url,function(){
+        jsCssMin('css',data,url,build+init.cssPath,function(){
           ep.emit('cssMin');
         });
 
@@ -80,15 +83,15 @@
     res.send({code:code,data:{out:{},err:{}},err:null,msg:msg});
   }
 
-  phan.getHtml = function(req,res,url,token){
-    getPage(req,res,url,token,'html');
+  phan.getHtml = function(req,res,url,token,filter){
+    getPage(req,res,url,token,'html',filter);
   }
 
-  phan.getA = function(req,res,url,token){
-    getPage(req,res,url,token,'a');
+  phan.getA = function(req,res,url,token,filter){
+    getPage(req,res,url,token,'a',filter);
   }
 
-  function getPage(req,res,url,token,type){
+  function getPage(req,res,url,token,type,filter){
     if(token !== init.token){
       handleErr(req,res,500,'无效的token');
       return
@@ -101,8 +104,8 @@
     url = urls.parse(decodeURIComponent(url));
     url = (url.protocol?url.protocol:'http:') + '//' + (url.host?url.host:url.href) + (url.host?url.path:'');
 
-    var args = [__dirname + '/../core/getPage.js',url,type];
-    childProcess.execFile(binPath, args, function(err, stdout, stderr){
+    var args = [__dirname + '/../core/getPage.js',url,type,filter];
+    childProcess.exec(cmd + ' ' + args.join(' '), function(err, stdout, stderr){
       var stdout = stdout || '',
           stderr = stderr || '';
       var data = {

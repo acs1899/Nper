@@ -1,19 +1,19 @@
 ;(function(){
   var fs = require('fs');
   var gm = require('gm');
+  var path = require('path');
   var request = require('request');
   var eventProxy = require('eventproxy');
   var tools = require('../lib/tools.js');
   var compressor = require('yuicompressor');
   var init = require('./init.json');
 
-  var staticPath = __dirname + '/..' +init.staticPath;
   var cssPath = init.cssPath;
   var jsPath = init.jsPath;
 
   module.exports = jsCssMin;
 
-  function jsCssMin(type,data,url,callback){
+  function jsCssMin(type,data,url,build,callback){
     var _data = data.data.out,
         ep = eventProxy(),
         type = typeof type == 'string' ? type : 'js',
@@ -32,7 +32,7 @@
     });
 
     /*创建目录*/
-    tools.mkd(staticPath+url+filePath,function(){
+    tools.mkd(build,function(){
       files.map(function(v){
         var _name = v.url.split('/').pop();
         if(_name.split('?').length > 1){
@@ -40,7 +40,7 @@
         }else{
           _name = _name.split('?')[0];
         }
-        var file = staticPath+url+filePath+'/'+ (_name ? _name : '');
+        var file = build+'/'+ (_name ? _name : '');
         _data.comps[v.key].recmp = 0;
 
         /*文件是否存在*/
@@ -57,11 +57,9 @@
                 if(!err){
                   fs.writeFile(file,data,function(){
                     _data.comps[v.key].recmp = fs.statSync(file).size;
-                    //console.log('a:'+file);
                     ep.emit('fileSave');
                   });
                 }else{
-                  //console.log('b:'+file+'err:'+err)
                   _data.comps[v.key].err = err;
                   ep.emit('fileSave');
                 }
@@ -73,7 +71,6 @@
               if(!err){
                 _data.comps[v.key].recmp = stat.size;
               }
-              console.log('c:'+file+';url:'+v.url)
               ep.emit('fileSave');
             });
           }

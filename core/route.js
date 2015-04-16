@@ -29,7 +29,7 @@
   function handleErr(req,res){
     var type = req.method.toLowerCase();
     switch(type){
-      case 'get' : require(__dirname + '/../controller/index.js').index(req,res);break;
+      case 'get' : res.redirect('/');break;
       default : res.send({code:500,data:{out:{},err:{}},err:null,msg:'server error'});
     }
   }

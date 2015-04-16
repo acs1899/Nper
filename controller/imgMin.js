@@ -1,18 +1,17 @@
 ;(function(){
   var fs = require('fs');
   var gm = require('gm');
+  var path = require('path');
   var request = require('request');
   var eventProxy = require('eventproxy');
   var tools = require('../lib/tools.js');
   var init = require('./init.json');
-
-  var staticPath = __dirname + '/..' +init.staticPath;
   var imgPath = init.imgPath;
 
   module.exports = imgMin;
 
   /*图片压缩*/
-  function imgMin(data,url,callback){
+  function imgMin(data,url,build,callback){
     var ep = new eventProxy(),
         _data = data.data.out,
         imgs = tools.dataFilter(_data,'image').concat(tools.dataFilter(_data,'cssimage')),
@@ -24,7 +23,7 @@
     });
 
     /*创建目录*/
-    tools.mkd(staticPath+url+imgPath,function(){
+    tools.mkd(build,function(){
       imgs.map(function(v){
         var _name = v.url.split('/').pop();
         if(_name.split('?').length > 1){
@@ -32,7 +31,7 @@
         }else{
           _name = _name.split('?')[0];
         }
-        var file = staticPath+url+imgPath+'/'+ (_name ? _name : '');
+        var file = build+'/'+ (_name ? _name : '');
         _data.comps[v.key].recmp = 0;
         /*图片是否存在*/
         fs.exists(file,function(ex){
@@ -49,7 +48,7 @@
                 //.in('-colors','254')
                 .write(file,function(err){
                   if(err){
-                        console.log(file)
+                    console.log(err)
                     ep.emit('minImg');
                     _data.comps[v.key].err = err;
                   }else{

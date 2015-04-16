@@ -17,8 +17,14 @@ $(function(){
       __data.url = decodeURIComponent(__data.url);
       if(__data.type == 'js' || __data.type == 'css' || __data.type == 'image' || __data.type == 'cssimage'){
         if(!__data.err){
-          __data.cmr = (((__data.recmp-__data.size)/__data.size)*100).toFixed(2)+'%';
-          __data.recmp = dealSize(__data.recmp);
+          __data.cmr = (((__data.recmp-__data.size)/__data.size)*100);
+          if(__data.cmr < 0){
+            __data.cmr = __data.cmr.toFixed(2)+'%';
+            __data.recmp = dealSize(__data.recmp);
+          }else{
+            __data.cmr = '';
+            __data.recmp = '';
+          }
         }else{
           __data.cmr = 'N/A';
           __data.recmp = 'syntax errors';
