@@ -28,15 +28,17 @@ url/token/filter
 * `url` 要抓取网页的URL，包含特殊符号需要转义。（必须）
 * `token` 123456（必须，可在controller/init.json中配置）
 * `filter` 只有 getA 接口接受此参数。（可选）
-    * filter = ''：返回的A标签地址列表只包含当前域名（默认）
-    * filter = 'crs' ：返回的A标签地址列表不包含当前域名
-    * filter = 'all' : 返回所有A标签地址列表
+    * `filter` = ''：返回的A标签地址列表只包含当前域名（默认）
+    * `filter` = 'crs' ：返回的A标签地址列表不包含当前域名
+    * `filter` = 'all' : 返回所有A标签地址列表
 
 ###Eg
 
 获取www.baidu.com页面中所有A标签地址（不包含当前域）
 
-`http://yourserver/phan/getA/www.baidu.com/123456/crs`
+```bash
+http://yourserver/phan/getA/www.baidu.com/123456/crs
+```
 
 返回值
 
