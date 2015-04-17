@@ -30,8 +30,9 @@
                 var unique = function(arr){
                     var n = {},r = [];
                     for(var i=0,l=arr.length;i<l;i++){
-                        if(!n[arr[i].host+arr[i].pathname]){
-                            n[arr[i].host+arr[i].pathname] = true;
+                        var _k = arr[i].host + arr[i].pathname + arr[i].search + arr[i].hash;
+                        if(!n[_k]){
+                            n[_k] = true;
                             r.push(arr[i].href);
                         }
                     }
@@ -60,8 +61,9 @@
                 var unique = function(arr){
                     var n = {},r = [];
                     for(var i=0,l=arr.length;i<l;i++){
-                        if(!n[arr[i].host+arr[i].pathname]){
-                            n[arr[i].host+arr[i].pathname] = true;
+                        var _k = arr[i].host + arr[i].pathname + arr[i].search + arr[i].hash;
+                        if(!n[_k]){
+                            n[_k] = true;
                             r.push(arr[i].href);
                         }
                     }
@@ -92,8 +94,9 @@
                 var unique = function(arr){
                     var n = {},r = [];
                     for(var i=0,l=arr.length;i<l;i++){
-                        if(!n[arr[i].host+arr[i].pathname]){
-                            n[arr[i].host+arr[i].pathname] = true;
+                        var _k = arr[i].host + arr[i].pathname + arr[i].search + arr[i].hash;
+                        if(!n[_k]){
+                            n[_k] = true;
                             r.push(arr[i].href);
                         }
                     }
