@@ -9,6 +9,7 @@
     var action = paths[2] || 'index';
     var args = paths.slice(3);
     var mod;
+
     if(type !== 'get'){
       args = req.body;
     }
@@ -18,6 +19,7 @@
       handleErr(req,res);
       return
     }
+
     var method = mod[action];
     if(method){
       method.apply(null,[req,res].concat(args));
