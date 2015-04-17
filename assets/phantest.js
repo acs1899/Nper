@@ -26,8 +26,8 @@ $(function(){
             __data.recmp = '';
           }
         }else{
-          __data.cmr = 'N/A';
-          __data.recmp = 'syntax errors';
+          __data.cmr = '';
+          __data.recmp = '';
         }
       }
       __data.size = dealSize(__data.size);
@@ -118,6 +118,7 @@ $(function(){
   function dealCacheTime(time){
     var time = isNum(time) ? time : 0;
     switch(true){
+      case time == 0 : time = 'no-cache';break;
       case time/3600 < 1 : time = '<1小时';break;
       case time/86400 < 1 : time = (time/3600).toFixed(2)+'小时';break;
       case time/2591999 < 1 : time = parseInt(time/86400)+'天';break;
@@ -126,25 +127,30 @@ $(function(){
     }
     return time
   }
-
+  
+  var mutex = false;
   function fetchUrl(){
-    $.ajax({
-      url:'/phan/analyse',
-      type:'POST',
-      data:{'url':encodeURIComponent(input.val()),'cdns':cdns},
-      error:function(){
-        en();
-      },
-      success:function(data){
-        if(data.code === 200){
-          var _data = data.data.out;
-          deal(_data);
-        }else{
-          input.focus();
+    if(!mutex){
+      mutex = true;
+      $.ajax({
+        url:'/phan/analyse',
+        type:'POST',
+        data:{'url':encodeURIComponent(input.val()),'cdns':cdns},
+        error:function(){
           en();
+        },
+        success:function(data){
+          if(data.code === 200){
+            var _data = data.data.out;
+            deal(_data);
+          }else{
+            input.focus();
+            en();
+          }
+          mutex = false;
         }
-      }
-    });
+      });
+    }
   }
 
   function dis(){
