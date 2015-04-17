@@ -31,8 +31,8 @@
 
     if(url){
       childProcess.exec(cmd + ' ' +  childArgs.join(' '), function(err, stdout, stderr) {
-        var stdout = stdout || '',
-            stderr = stderr || '';
+        var stdout = stdout.trim() || '',
+            stderr = stderr.trim() || '';
         var data = {
           code:err ? 0 : 200,
           data:{out:stdout,err:stderr},
@@ -40,10 +40,12 @@
           msg:''
         }
         if(err){
+          console.error('analyse :' + url + ' throw err: '+err);
           return res.send(data)
         }
-        if(stdout === 'FAIL to load undefined\n'){
-          handleErr(req,res,404,'无效的URL');
+        if(stdout === 'FAIL to load undefined'){
+          console.error('analyse : Yslow FAIL to load ' + url);
+          handleErr(req,res,404,{out:{},err:{}},null,'无效的URL');
           return
         }
 
@@ -75,12 +77,13 @@
 
       });
     }else{
-      handleErr(req,res,404,'无效的URL');
+      console.error('analyse : invalid url ' + url)
+      handleErr(req,res,404,{out:{},err:{}},null,'无效的URL');
     }
   }
 
-  function handleErr(req,res,code,msg){
-    res.send({code:code,data:{out:{},err:{}},err:null,msg:msg});
+  function handleErr(req,res,code,data,err,msg){
+    res.send({code:code,data:data,err:err,msg:msg});
   }
 
   phan.getHtml = function(req,res,url,token,filter){
@@ -93,11 +96,13 @@
 
   function getPage(req,res,url,token,type,filter){
     if(token !== init.token){
-      handleErr(req,res,500,'无效的token');
+      console.error('getPage : invalid token ' + token + ' with ' + url);
+      handleErr(req,res,500,{},null,'无效的token');
       return
     }
     if(!url){
-      handleErr(req,res,404,'无效的URL');
+      console.error('getPage : invalid url ' + url);
+      handleErr(req,res,404,{},null,'无效的URL');
       return
     }
 
@@ -106,8 +111,8 @@
 
     var args = [__dirname + '/../core/getPage.js',url,type,filter];
     childProcess.exec(cmd + ' ' + args.join(' '), function(err, stdout, stderr){
-      var stdout = stdout || '',
-          stderr = stderr || '';
+      var stdout = stdout.trim() || '',
+          stderr = stderr.trim() || '';
       var data = {
         code:err ? 0 : 200,
         data:stdout,
@@ -116,9 +121,12 @@
       }
 
       switch(true){
-        case !!err : res.send(data);return;
-        case stdout === 'FAIL to load undefined\n' : handleErr(req,res,404,'无效的URL');return;
-        case stdout === 'fail' : handleErr(req,res,500,'load URL fail');return
+        case !!err : 
+          console.error('getPage : throw err ' + err + ' with ' + url);
+          res.send(data);return;
+        case stdout === 'fail' : 
+          console.error('getPage : load URL fail ' + url);
+          handleErr(req,res,500,{},null,'load URL fail');return
       }
 
       switch(type){
