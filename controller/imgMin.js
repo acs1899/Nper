@@ -40,26 +40,37 @@
             /*保存图片回调*/
             _fs.on('close',function(chunk){
               /*压缩图片*/
-              gm(file)
-                .command('convert')
-                .in('-quality','50')
-                //.in('+dither')
-                //.in('-depth','24')
-                //.in('-colors','254')
-                .write(file,function(err){
-                  if(err){
-                    console.log(err)
-                    ep.emit('minImg');
-                    _data.comps[v.key].err = err;
-                  }else{
-                    fs.stat(file,function(err,stat){
-                      if(!err){
-                        _data.comps[v.key].recmp = stat.size
+              fs.stat(file,function(err,stat){
+                if(err){
+                  console.error('read file stat err:'+err);
+                  _data.comps[v.key].err = err;
+                  ep.emit('minImg');
+                }else if(stat.size == 0){
+                  console.log(v.url + ' file is empty');
+                  ep.emit('minImg');
+                }else{
+                  gm(file)
+                    .command('convert')
+                    .in('-quality','50')
+                    .write(file,function(err){
+                      if(err){
+                        console.error('gm throw err:'+err);
+                        _data.comps[v.key].err = err;
+                        ep.emit('minImg');
+                      }else{
+                        fs.stat(file,function(err,stat){
+                          if(!err){
+                            _data.comps[v.key].recmp = stat.size;
+                          }else{
+                            console.error('gm writed then read file throw err:'+err);
+                            _data.comps[v.key].err = err;
+                          }
+                          ep.emit('minImg');
+                        });
                       }
-                      ep.emit('minImg');
                     });
-                  }
-                });
+                }
+              });
             });
             request(v.url).pipe(_fs);
           }else{
