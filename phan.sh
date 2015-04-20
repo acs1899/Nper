@@ -14,8 +14,8 @@ get_pid(){
   if [ ! -d $DIR/run ]; then
     mkdir $DIR/run
   fi
-  if [ ! -d $DIR/log ]; then
-    mkdir $DIR/log
+  if [ ! -d $DIR/logs ]; then
+    mkdir $DIR/logs
   fi
   if [ -f $DIR/run/app.pid ]; then
     echo `cat ./run/app.pid`
