@@ -6,6 +6,19 @@
   var type = args[2] ? args[2] : 'html';
   var filter = args[3] ? args[3] : '';
 
+  page.settings.loadImages = false;
+
+  page.onError = function(msg, trace){
+    var msgStack = ['ERROR: ' + msg];
+    if(trace && trace.length){
+      msgStack.push('TRACE:');
+      trace.forEach(function(t) {
+        msgStack.push(' -> ' + t.file + ': ' + t.line + (t.function ? ' (in function "' + t.function +'")' : ''));
+      });
+    }
+    console.error(msgStack.join('\n'));
+  }
+
   page.open(args[1], function(statu) {
     var out = '';
     if(statu != 'fail'){
@@ -115,7 +128,7 @@
               });
           }
       }
-      console.log(JSON.stringify(out));
+      console.log('<$sos%='+JSON.stringify(out)+'=%sos$>');
       phantom.exit();
     }else{
       console.log(statu);
