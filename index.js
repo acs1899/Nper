@@ -7,18 +7,18 @@ var route = require('./core/route.js');
 var log4js = require('log4js');
 var app = express();
 
-log4js.configure({                                             
- appenders: [                                                  
+log4js.configure({
+ appenders: [
     { type: 'dateFile', filename: './logs/log/', pattern: 'yyyy-MM-dd.log', alwaysIncludePattern: true, category: 'info' },
     { type: 'dateFile', filename: './logs/err/', pattern: 'yyyy-MM-dd.log', alwaysIncludePattern: true, category: 'err' }
-  ]                                                            
-});                                                            
-                                                               
-var logger = log4js.getLogger('info');                         
-var errer = log4js.getLogger('err');                           
-logger.setLevel('INFO');                                       
-errer.setLevel('ERROR');                                       
-                                                               
+  ]
+});
+
+var logger = log4js.getLogger('info');
+var errer = log4js.getLogger('err');
+logger.setLevel('INFO');
+errer.setLevel('ERROR');
+
 app.use(log4js.connectLogger(logger, {level: log4js.levels.INFO}));
 app.use(log4js.connectLogger(errer, {level: log4js.levels.ERROR}));
 
@@ -33,7 +33,7 @@ app.all('*',function(req,res){
   route(req,res);
 });
 
-app.listen(80);
+app.listen(8080);
 
 var pidfile = path.join(__dirname,'run/app.pid');
 fs.writeFileSync(pidfile,process.pid);
@@ -42,7 +42,7 @@ process.on('exit',function(code){
   console.log('process exit with code: ' + code);
 });
 process.on('uncaughtException',function(err){
-  console.log('Caught exception: ' + err);        
+  console.log('Caught exception: ' + err);
 });
 process.on('SIGTERM',function(){
   if(fs.existsSync(pidfile)){
