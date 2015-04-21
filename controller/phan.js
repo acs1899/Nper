@@ -110,9 +110,16 @@
     url = (url.protocol?url.protocol:'http:') + '//' + (url.host?url.host:url.href) + (url.host?url.path:'');
 
     var args = [__dirname + '/../core/getPage.js',url,type,filter];
+    var t1 = new Date().getTime();
+
     childProcess.exec(cmd + ' ' + args.join(' '), function(err, stdout, stderr){
       var stdout = stdout.trim() || '',
           stderr = stderr.trim() || '';
+
+      var reg = /<\$sos%=([\s\S]*)=%sos\$>/;
+      var _stdout = stdout.match(reg);
+      stdout = _stdout ? _stdout[1] : '{}';
+
       var data = {
         code:err ? 0 : 200,
         data:stdout,
@@ -126,12 +133,27 @@
           res.send(data);return;
         case stdout === 'fail' : 
           console.error('getPage : load URL fail ' + url);
-          handleErr(req,res,500,{},null,'load URL fail');return
+          handleErr(req,res,500,{},null,'load URL fail');return;
+        case !!stderr:
+          console.error('getPage : throw stderr ' + stderr + ' with ' + url);
+          data.err = stderr;
+          res.send(data);return;
       }
-
-      switch(type){
-        case 'a' : data.data = JSON.parse(stdout);break;
+      
+      try{
+        switch(type){
+          case 'a' : data.data = JSON.parse(stdout);break;
+        }
+      }catch(error){
+          data.code = 0;
+          data.data = null;
+          data.err = error;
+          data.msg = 'parse stdout error';
+          console.log(stdout);
+          console.log('getPage : parse stdou error: ' + error + ' with ' + url);
       }
+      
+      data.time = (((new Date().getTime())-t1)/1000).toFixed(2);
       res.send(data);
     });
   }
