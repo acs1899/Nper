@@ -33,20 +33,24 @@ app.all('*',function(req,res){
   route(req,res);
 });
 
-app.listen(8080);
-
-var pidfile = path.join(__dirname,'run/app.pid');
-fs.writeFileSync(pidfile,process.pid);
+var server = app.listen(8080);
 
 process.on('exit',function(code){
   console.log('process exit with code: ' + code);
 });
 process.on('uncaughtException',function(err){
-  console.log('Caught exception: ' + err);
+  console.log('worker '+process.pid+' Caught exception: ' + err);
+  /*通知master该进程即将结束*/
+  process.send('suicide');
+  /*停止接收新请求*/
+  server.close(function(){
+    console.log('worker '+process.pid+' closed!!!')
+    process.exit(1);
+  });
+  setTimeout(function(){
+    process.exit(1);
+  },5000);
 });
 process.on('SIGTERM',function(){
-  if(fs.existsSync(pidfile)){
-      fs.unlinkSync(pidfile);
-  }
   process.exit(0);
 });

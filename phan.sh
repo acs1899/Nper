@@ -28,7 +28,7 @@ start(){
   if [ ! -z $pid ]; then
     echo 'server is already running'
   else
-    $NODE $DIR/index.js >$DIR/logs/phan.log 2>&1 &
+    $NODE $DIR/master.js >$DIR/logs/phan.log 2>&1 &
     echo 'server is running'
   fi
 }

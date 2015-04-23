@@ -6,7 +6,7 @@
   var imgMin = require('./imgMin.js');
   var jsCssMin = require('./jsCssMin.js');
   var tools = require('../lib/tools.js');
-  var init = require('./init.json');
+  var init = require('../init/init.json');
   var urls = require('url');
   var cmd = 'phantomjs';
   var url = '';

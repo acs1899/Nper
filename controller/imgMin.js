@@ -5,7 +5,7 @@
   var request = require('request');
   var eventProxy = require('eventproxy');
   var tools = require('../lib/tools.js');
-  var init = require('./init.json');
+  var init = require('../init/init.json');
   var imgPath = init.imgPath;
 
   module.exports = imgMin;

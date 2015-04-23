@@ -6,7 +6,7 @@
   var eventProxy = require('eventproxy');
   var tools = require('../lib/tools.js');
   var compressor = require('yuicompressor');
-  var init = require('./init.json');
+  var init = require('../init/init.json');
 
   var cssPath = init.cssPath;
   var jsPath = init.jsPath;
