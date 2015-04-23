@@ -3,5 +3,6 @@
   "imgPath" : "/image",
   "cssPath" : "/css",
   "jsPath" : "/script",
+  "workers" : 2,
   "token" : "123456"
 }

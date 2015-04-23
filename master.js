@@ -1,5 +1,6 @@
 var cl = require('cluster');
-var cpus = require('os').cpus();
+var init = require('./init/init.json');
+var cpus = init.workers || require('os').cpus().length;
 var path = require('path');
 var fs = require('fs');
 var workers = {};
@@ -8,7 +9,7 @@ cl.setupMaster({
   exec:'index.js'
 });
 
-for(var i=0,l=cpus.length;i<l;i++){
+for(var i=0,l=cpus;i<l;i++){
   var _worker = cl.fork();
   workers[_worker.process.pid] = _worker;
   workerHandle(_worker);
